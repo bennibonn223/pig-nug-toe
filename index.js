@@ -94,7 +94,11 @@ function checkWinner() {
 function gameOverScreen(winnerText) {
   let text = "Draw!";
   if (winnerText != null) {
-    text = `Winner of Pig Nug Toe is ${winnerText}!`;
+    if (winnerText === PLAYER_X) {
+      text = `Winner of Pig Nug Toe is Pig! 🐷`;
+    } else {
+      text = `Winner of Pig Nug Toe is Nug! 🍗`;
+    }
   }
   gameOverArea.className = "visible";
   gameOverText.innerText = text;
