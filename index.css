@@ -1,0 +1,161 @@
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffe5b4; 
+  color: #ff69b4; /* Rosa acceso per richiamare il maiale */
+  font-family: 'Fredoka', sans-serif;
+}
+
+#board {
+  display: grid;
+  grid-template-columns: 100px 100px 100px;
+  grid-template-rows: 100px 100px 100px;
+  cursor: pointer;
+  position: relative;
+}
+
+.tile {
+  background-color: #fffaf0; /* Beige chiaro */
+  color: #ff4500; /* Rosso arancio per un contrasto caldo */
+  font-size: 3em;
+  border-radius: 12px; /* Angoli arrotondati per un aspetto moderno */
+  transition: background-color 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.right-border {
+  border-right: 0.2em solid indigo;
+  border-color: #ff4500;
+}
+
+.bottom-border {
+  border-bottom: 0.2em solid indigo;
+  border-color: #ff4500;
+}
+
+.strike {
+  position: absolute;
+  background-color: #ff69b4;
+}
+
+.strike-row-1 {
+  width: 100%;
+  height: 4px;
+  top: 15%;
+}
+.strike-row-2 {
+  width: 100%;
+  height: 4px;
+  top: 48%;
+}
+.strike-row-3 {
+  width: 100%;
+  height: 4px;
+  top: 83%;
+}
+.strike-column-1 {
+  height: 100%;
+  width: 4px;
+  left: 15%;
+}
+.strike-column-2 {
+  height: 100%;
+  width: 4px;
+  left: 48%;
+}
+.strike-column-3 {
+  height: 100%;
+  width: 4px;
+  left: 83%;
+}
+.strike-diagonal-1 {
+  width: 90%;
+  height: 4px;
+  top: 50%;
+  left: 5%;
+  transform: skewY(45deg);
+}
+.strike-diagonal-2 {
+  width: 90%;
+  height: 4px;
+  top: 50%;
+  left: 5%;
+  transform: skewY(-45deg);
+}
+
+h1 {
+  color: currentColor;
+  font-family: 'Fredoka', sans-serif;
+}
+
+#game-over-area {
+  text-align: center;
+  border: indigo 8px solid;
+  padding: 50px;
+  width: 50%;
+  margin-top: 50px;
+}
+
+h2 {
+  color: currentColor;
+  font-size: 2em;
+  margin-top: 0px;
+  font-family: 'Fredoka', sans-serif;
+}
+
+button {
+  background-color: #ff69b4;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.2em;
+  transition: background-color 0.2s ease;
+  font-family: 'Fredoka', sans-serif;
+}
+
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
+
+.o-hover:hover::after {
+content: "";
+  background-image: url('images/o.png'); 
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.4;
+  display: block;
+  width: 80%;
+  height: 80%;
+  margin: auto;
+}
+.x-hover:hover::after {
+  content: "";
+  background-image: url('images/x.png'); 
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.4;
+  display: block;
+  width: 80%;
+  height: 80%;
+  margin: auto;
+}
+
+
+.symbol {
+  width: 70%; /* Ridimensiona per adattarsi meglio alla casella */
+  height: 70%; /* Mantiene le proporzioni */
+  object-fit: contain; /* Si adatta senza deformarsi */
+}
+
+button:hover {
+  background-color: #ff4500;
+}
