@@ -1,129 +1,145 @@
-const tiles = document.querySelectorAll(".tile");
-const PLAYER_X = "X";
-const PLAYER_O = "O";
-let turn = PLAYER_X;
+document.addEventListener("DOMContentLoaded", () => {
+  const tiles = document.querySelectorAll(".tile");
+  const PLAYER_X = "X";
+  const PLAYER_O = "O";
+  let turn = null;
 
-const boardState = Array(tiles.length);
-boardState.fill(null);
+  const boardState = Array(tiles.length).fill(null);
 
-//Elements
-const strike = document.getElementById("strike");
-const gameOverArea = document.getElementById("game-over-area");
-const gameOverText = document.getElementById("game-over-text");
-const playAgain = document.getElementById("play-again");
-playAgain.addEventListener("click", startNewGame);
+  const strike = document.getElementById("strike");
+  const gameOverArea = document.getElementById("game-over-area");
+  const gameOverText = document.getElementById("game-over-text");
+  const playAgain = document.getElementById("play-again");
 
-//Sounds
-const gameOverSound = new Audio("sounds/game_over.wav");
-const clickSound = new Audio("sounds/click.wav");
+  const startSelection = document.getElementById("start-selection");
+  const startPig = document.getElementById("start-pig");
+  const startNug = document.getElementById("start-nug");
 
-tiles.forEach((tile) => tile.addEventListener("click", tileClick));
+  startPig.addEventListener("click", () => startGame(PLAYER_X));
+  startNug.addEventListener("click", () => startGame(PLAYER_O));
+  playAgain.addEventListener("click", resetGame);
 
-function setHoverText() {
-  //remove all hover text
-  tiles.forEach((tile) => {
-    tile.classList.remove("x-hover");
-    tile.classList.remove("o-hover");
-  });
+  function startGame(player) {
+    turn = player;
 
-  const hoverClass = `${turn.toLowerCase()}-hover`;
+    // ✅ Aggiunge il listener solo dopo la selezione
+    tiles.forEach((tile) => {
+      tile.addEventListener("click", tileClick);
+    });
 
-  tiles.forEach((tile) => {
-    if (tile.innerText == "") {
-      tile.classList.add(hoverClass);
-    }
-  });
-}
+    // Nasconde il pannello di selezione
+    startSelection.classList.add("hidden");
+    setTimeout(() => {
+      startSelection.style.display = "none";
+    }, 300);
 
-setHoverText();
-
-function tileClick(event) {
-  if (gameOverArea.classList.contains("visible")) {
-    return;
+    setHoverText();
   }
 
-  const tile = event.currentTarget; 
-  if (tile.querySelector("img")) {
-    return;
-  }
-
-  const tileNumber = tile.dataset.index;
-
-  if (turn === PLAYER_X) {
-    tile.innerHTML = `<img src="images/x.png" alt="X" class="symbol" />`;
-    boardState[tileNumber - 1] = PLAYER_X;
-    turn = PLAYER_O;
-  } else {
-    tile.innerHTML = `<img src="images/o.png" alt="O" class="symbol" />`;
-    boardState[tileNumber - 1] = PLAYER_O;
-    turn = PLAYER_X;
-  }
-
-  clickSound.play();
-  setHoverText();
-  checkWinner();
-}
-
-function checkWinner() {
-  //Check for a winner
-  for (const winningCombination of winningCombinations) {
-    //Object Destructuring
-    const { combo, strikeClass } = winningCombination;
-    const tileValue1 = boardState[combo[0] - 1];
-    const tileValue2 = boardState[combo[1] - 1];
-    const tileValue3 = boardState[combo[2] - 1];
-
-    if (
-      tileValue1 != null &&
-      tileValue1 === tileValue2 &&
-      tileValue1 === tileValue3
-    ) {
-      strike.classList.add(strikeClass);
-      gameOverScreen(tileValue1);
+  function tileClick(event) {
+    if (gameOverArea.classList.contains("visible") || turn === null) {
       return;
     }
-  }
 
-  //Check for a draw
-  const allTileFilledIn = boardState.every((tile) => tile !== null);
-  if (allTileFilledIn) {
-    gameOverScreen(null);
-  }
-}
+    const tile = event.target;
 
-function gameOverScreen(winnerText) {
-  let text = "Draw!";
-  if (winnerText != null) {
-    if (winnerText === PLAYER_X) {
-      text = `Winner of Pig Nug Toe is Pig! 🐷`;
+    // ✅ Blocca la casella se è già stata usata
+    if (tile.querySelector("img") || boardState[tile.dataset.index - 1] !== null) {
+      return;
+    }
+
+    const tileNumber = tile.dataset.index;
+
+    if (turn === PLAYER_X) {
+      tile.innerHTML = `<img src="images/x.png" alt="Pig" class="symbol" />`;
+      boardState[tileNumber - 1] = PLAYER_X;
+      turn = PLAYER_O;
     } else {
-      text = `Winner of Pig Nug Toe is Nug! 🍗`;
+      tile.innerHTML = `<img src="images/o.png" alt="Nug" class="symbol" />`;
+      boardState[tileNumber - 1] = PLAYER_O;
+      turn = PLAYER_X;
+    }
+
+    setHoverText();
+    checkWinner();
+  }
+
+  function checkWinner() {
+    const winningCombinations = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+      [1, 4, 7],
+      [2, 5, 8],
+      [3, 6, 9],
+      [1, 5, 9],
+      [3, 5, 7],
+    ];
+
+    for (const combo of winningCombinations) {
+      const [a, b, c] = combo;
+      if (
+        boardState[a - 1] &&
+        boardState[a - 1] === boardState[b - 1] &&
+        boardState[a - 1] === boardState[c - 1]
+      ) {
+        gameOverScreen(boardState[a - 1]);
+        return;
+      }
+    }
+
+    // Pareggio
+    if (boardState.every((tile) => tile !== null)) {
+      gameOverScreen(null);
     }
   }
-  gameOverArea.className = "visible";
-  gameOverText.innerText = text;
-  gameOverSound.play();
-}
 
-function startNewGame() {
-  strike.className = "strike";
-  gameOverArea.className = "hidden";
-  boardState.fill(null);
-  tiles.forEach((tile) => (tile.innerText = ""));
-  turn = PLAYER_X;
-  setHoverText();
-}
+  function gameOverScreen(winnerText) {
+    let text = "Draw!";
+    if (winnerText != null) {
+      text = winnerText === PLAYER_X
+        ? "Winner of Pig Nug Toe is Pig! 🐷"
+        : "Winner of Pig Nug Toe is Nug! 🍗";
+    }
+    gameOverArea.classList.add("visible");
+    gameOverText.innerText = text;
+  }
 
-const winningCombinations = [
-  //rows
-  { combo: [1, 2, 3], strikeClass: "strike-row-1" },
-  { combo: [4, 5, 6], strikeClass: "strike-row-2" },
-  { combo: [7, 8, 9], strikeClass: "strike-row-3" },
-  //columns
-  { combo: [1, 4, 7], strikeClass: "strike-column-1" },
-  { combo: [2, 5, 8], strikeClass: "strike-column-2" },
-  { combo: [3, 6, 9], strikeClass: "strike-column-3" },
-  //diagonals
-  { combo: [1, 5, 9], strikeClass: "strike-diagonal-1" },
-  { combo: [3, 5, 7], strikeClass: "strike-diagonal-2" },
-];
+  function resetGame() {
+    strike.className = "strike";
+    gameOverArea.classList.remove("visible");
+    boardState.fill(null);
+
+    // ✅ Rimuove le immagini dalle caselle e i listener per evitare conflitti
+    tiles.forEach((tile) => {
+      tile.innerHTML = "";
+      tile.removeEventListener("click", tileClick);
+    });
+
+    // ✅ Rende visibile di nuovo la selezione iniziale
+    startSelection.classList.remove("hidden");
+    startSelection.style.display = "block";
+    turn = null;
+  }
+
+  function setHoverText() {
+    tiles.forEach((tile) => {
+      tile.classList.remove("x-hover");
+      tile.classList.remove("o-hover");
+    });
+
+    if (turn === PLAYER_X) {
+      tiles.forEach((tile) => {
+        if (!tile.querySelector("img")) {
+          tile.classList.add("x-hover");
+        }
+      });
+    } else if (turn === PLAYER_O) {
+      tiles.forEach((tile) => {
+        if (!tile.querySelector("img")) {
+          tile.classList.add("o-hover");
+        }
+      });
+    }
+  }
+});
