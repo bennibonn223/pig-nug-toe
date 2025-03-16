@@ -10,6 +10,7 @@
   </head>
   <body>
     <h1>Pig Nug Toe</h1>
+
     <div id="board">
       <div data-index="1" class="tile right-border bottom-border"></div>
       <div data-index="2" class="tile right-border bottom-border"></div>
@@ -22,10 +23,19 @@
       <div data-index="9" class="tile"></div>
       <div id="strike" class="strike"></div>
     </div>
+
+    <!-- ✨ Spostato sotto il tabellone -->
+    <div id="start-selection" class="visible">
+      <h2>Who starts?</h2>
+      <button id="start-pig">🐷 Start with Pig</button>
+      <button id="start-nug">🍗 Start with Nug</button>
+    </div>
+
     <div id="game-over-area" class="hidden">
       <h2 id="game-over-text">Winner is X</h2>
       <button id="play-again">Play Again</button>
     </div>
+
     <script src="index.js"></script>
   </body>
 </html>
